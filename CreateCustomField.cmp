@@ -1,0 +1,119 @@
+<aura:component controller="APTS_CreateCustomFieldLR" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    <aura:attribute name="FieldName" type="String" />
+    <aura:attribute name="FieldAPIName" type="String" />
+    <aura:attribute name="FieldHelpText" type="String" />    
+    <aura:attribute name="FieldType" type="String" />
+    <aura:attribute name="FieldDescription" type="String" />
+    <aura:attribute name="FieldLength" type="Integer" />
+    <aura:attribute name="FieldPrecision" type="Integer" />
+    <aura:attribute name="FieldScale" type="Integer" />
+    <aura:attribute name="ObjAPIName" type="String" />
+    <aura:attribute name="ObjectsAPIName" type="list" />
+    <aura:attribute name="ObjAndFieldName" type="boolean" default="false" />
+    <aura:attribute name="bLenght" type="boolean" default="false" />
+    <aura:attribute name="bPrecisionAndScale" type="boolean" default="false" />
+    
+    <!--Declare Event Handlers-->
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}" description="Call doInit function on component load to get Object API Names"/>
+     
+    <!--Declare Attributes-->
+    <aura:attribute name="GenreList" type="List" default="[]" description="Genre Picklist Values"/>
+    <aura:attribute name="selectedObjectList" type="List" default="[]" description="Selected Genre Picklist Values"/>
+    
+    <aura:attribute name="newItem" type="Camping_Item__c" default="{'Price__c': 0, 'Packed__c': false, 'Quantity__c': 0, 'Name':'Test', 'sobjectType': 'Camping_Item__c'}" />
+    
+    <lightning:layout>
+        <lightning:layoutItem padding="around-small" size="6">
+            <!-- CREATE NEW EXPENSE -->
+            <div aria-labelledby="newCampingItem">
+                <!-- BOXED AREA -->
+                <fieldset class="slds-box slds-theme--default slds-container--small">
+                    <legend id="newCampingItem" class="slds-text-heading--small 
+                                                       slds-p-vertical--medium">
+                        Create Custom Field
+                    </legend>
+                    
+                    <!-- CREATE NEW EXPENSE FORM -->
+                    <form class="slds-form--stacked">
+                        <lightning:select name="FieldType" label="Select Field Type" aura:id="FieldTypeId" required="true" onchange="{!c.CustomFieldForm}">
+                            
+                            <option >Checkbox</option>
+                            <option >Text</option>
+                            <option >Number</option>
+                            <option >Currency</option>
+                        </lightning:select>
+                        
+                        <aura:if isTrue="{!v.ObjAndFieldName}">
+                            <!-- trying to get obj API Names -->
+                            <lightning:dualListbox aura:id="selectObject"
+                                                   name="Object"
+                                                   label="Select Object"
+                                                   sourceLabel="Available Object"
+                                                   selectedLabel="Selected Object"
+                                                   options="{!v.GenreList }"
+                                                   value="{!v.selectedObjectList}"
+                                                   onchange="{!c.handleObjectChange}"/>                       
+                            
+                            <lightning:input aura:id="CustomFieldFormInput" label="Field Name"
+                                             name="FieldName"
+                                             value="{!v.FieldName}"
+                                             required="true"/>
+                                             <!--onchange="{!c.setFieldAPIName}"  -->
+                            <lightning:input aura:id="CustomFieldFormInput" label="Field API Name"
+                                             name="FieldAPIName"
+                                             value="{!v.FieldAPIName}"
+                                             required="true"/> 
+                            
+                            
+                            
+                            <lightning:input aura:id="CustomFieldFormInput" label="Description"
+                                             name="FieldDescription"
+                                             value="{!v.FieldDescription}"/> 
+                            <lightning:input aura:id="CustomFieldFormInput" label="Help Text"
+                                             name="FieldHelpText"
+                                             value="{!v.FieldHelpText}"/> 
+                            
+                        </aura:if>
+                        <aura:if isTrue="{!v.bLenght}">
+                        <lightning:input type="number" aura:id="campingItemFormInput" label="Length"
+                                         name="itemQuantity"
+                                         value="{!v.FieldLength}"
+                                         messageWhenRangeUnderflow="Enter the quantity atleast 1"/>
+                         </aura:if>
+                        <aura:if isTrue="{!v.bPrecisionAndScale}">
+                        <lightning:input aura:id="CustomFieldFormInput" label="Field Precision"
+                                         name="FieldPrecision"
+                                         value="{!v.FieldPrecision}"/> 
+                        <lightning:input aura:id="CustomFieldFormInput" label="Field Scale"
+                                         name="FieldScale"
+                                         value="{!v.FieldScale}"/> 
+                        </aura:if>
+                        
+                        <lightning:button label="Create Field" 
+                                          class="slds-m-top--medium"
+                                          variant="brand"
+                                          onclick="{!c.save }"/>
+                        				
+                    </form>
+                    <!-- / CREATE NEW EXPENSE FORM -->
+                    
+                </fieldset>
+                <!-- / BOXED AREA -->
+            </div>
+            <!-- / CREATE NEW EXPENSE -->
+        </lightning:layoutItem>
+        
+        <lightning:layoutItem padding="around-small" size="6">
+            <aura:Iteration items="{!v.items}" var="item">
+                <c:campingListItem item="{!item}" />
+            </aura:Iteration>
+        </lightning:layoutItem>
+    </lightning:layout>
+    <!--
+ <ol>
+     <li>Bug Spray</li>
+        <li>Bear Repellant</li>
+        <li>Goat Food</li>
+    </ol>
+-->
+</aura:component>
